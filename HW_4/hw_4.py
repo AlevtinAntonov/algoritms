@@ -1,56 +1,52 @@
-import random
-
-class RBNode:
-    def __init__ (self, val):
+class Node:
+    def __init__(self, value):
         self.red = False
         self.parent = None
-        self.val = val
+        self.value = value
         self.left = None
         self.right = None
 
-class RBTree:
-    def __init__ (self):
-        self.nil = RBNode(0)
+
+class RedBlackTree:
+    def __init__(self):
+        self.nil = Node(0)
         self.nil.red = False
         self.nil.left = None
         self.nil.right = None
         self.root = self.nil
 
-    def insert(self, val):
-        # Ordinary Binary Search Insertion
-        new_node = RBNode(val)
+    def insert(self, value):
+        new_node = Node(value)
         new_node.parent = None
         new_node.left = self.nil
         new_node.right = self.nil
-        new_node.red = True # new node must be red
+        new_node.red = True
 
         parent = None
         current = self.root
         while current != self.nil:
             parent = current
-            if new_node.val < current.val:
+            if new_node.value < current.value:
                 current = current.left
-            elif new_node.val > current.val:
+            elif new_node.value > current.value:
                 current = current.right
             else:
                 return
 
-        # Set the parent and insert the new node
         new_node.parent = parent
-        if parent == None:
+        if parent is None:
             self.root = new_node
-        elif new_node.val < parent.val:
+        elif new_node.value < parent.value:
             parent.left = new_node
         else:
             parent.right = new_node
 
-        # Fix the tree
         self.fix_insert(new_node)
 
     def fix_insert(self, new_node):
         while new_node != self.root and new_node.parent.red:
             if new_node.parent == new_node.parent.parent.right:
-                u = new_node.parent.parent.left # uncle
+                u = new_node.parent.parent.left
                 if u.red:
                     u.red = False
                     new_node.parent.red = False
@@ -64,7 +60,7 @@ class RBTree:
                     new_node.parent.parent.red = True
                     self.rotate_left(new_node.parent.parent)
             else:
-                u = new_node.parent.parent.right # uncle
+                u = new_node.parent.parent.right
 
                 if u.red:
                     u.red = False
@@ -80,16 +76,15 @@ class RBTree:
                     self.rotate_right(new_node.parent.parent)
         self.root.red = False
 
-    def exists(self, val):
-        curr = self.root
-        while curr != self.nil and val != curr.val:
-            if val < curr.val:
-                curr = curr.left
+    def exists(self, value):
+        current = self.root
+        while current != self.nil and value != current.value:
+            if value < current.value:
+                current = current.left
             else:
-                curr = curr.right
-        return curr
+                current = current.right
+        return current
 
-    # rotate left at node x
     def rotate_left(self, x):
         y = x.right
         x.right = y.left
@@ -97,7 +92,7 @@ class RBTree:
             y.left.parent = x
 
         y.parent = x.parent
-        if x.parent == None:
+        if x.parent is None:
             self.root = y
         elif x == x.parent.left:
             x.parent.left = y
@@ -106,7 +101,6 @@ class RBTree:
         y.left = x
         x.parent = y
 
-    # rotate right at node x
     def rotate_right(self, x):
         y = x.left
         x.left = y.right
@@ -114,7 +108,7 @@ class RBTree:
             y.right.parent = x
 
         y.parent = x.parent
-        if x.parent == None:
+        if x.parent is None:
             self.root = y
         elif x == x.parent.right:
             x.parent.right = y
@@ -123,29 +117,30 @@ class RBTree:
         y.right = x
         x.parent = y
 
-    def __repr__ (self):
+    def __repr__(self):
         lines = []
         print_tree(self.root, lines)
         return '\n'.join(lines)
 
+
 def print_tree(node, lines, level=0):
-    if node.val != 0:
+    if node.value != 0:
         print_tree(node.left, lines, level + 1)
         lines.append('-' * 4 * level + '> ' +
-                     str(node.val) + ' ' + ('r' if node.red else 'b'))
+                     str(node.value) + ' ' + ('Red' if node.red else 'Black'))
         print_tree(node.right, lines, level + 1)
 
-def get_nums(num):
-    random.seed(1)
-    nums = []
-    for _ in range(num):
-        nums.append(random.randint(1, num-1))
-    return nums
 
-def main():
-    tree = RBTree()
-    for x in range(1, 51):
-        tree.insert(x)
-    print(tree)
+red_black_tree = RedBlackTree()
+red_black_tree.insert(11)
+red_black_tree.insert(15)
+red_black_tree.insert(13)
+red_black_tree.insert(1)
+red_black_tree.insert(8)
+red_black_tree.insert(6)
+red_black_tree.insert(17)
+red_black_tree.insert(22)
+red_black_tree.insert(25)
+red_black_tree.insert(27)
 
-main()
+print(red_black_tree)
